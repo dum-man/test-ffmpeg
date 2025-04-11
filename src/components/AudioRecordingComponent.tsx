@@ -53,6 +53,10 @@ const AudioRecorder: (props: Props) => ReactElement = ({
     stopRecording();
   };
 
+  // ffmpeg.writeFile("input.wav", await fetchFile(blob));
+  // await ffmpeg.exec(["-i", "input.wav", "-c:a", "aac", "-b:a", "192k", "output.m4a"]);
+  // const fileData = await ffmpeg.readFile("output.m4a");
+
   const convertToDownloadFileExtension = async (blob: Blob) => {
     const ffmpeg = new FFmpeg();
 
@@ -61,18 +65,35 @@ const AudioRecorder: (props: Props) => ReactElement = ({
       wasmURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.wasm`, "application/wasm"),
     });
 
-    ffmpeg.writeFile("input.wav", await fetchFile(blob));
+    ffmpeg.writeFile("input.webm", await fetchFile(blob));
 
-    await ffmpeg.exec(["-i", "input.wav", "-c:a", "aac", "-b:a", "192k", "output.m4a"]);
+    await ffmpeg.exec([
+      "-i",
+      "input.webm",
+      "-c:a",
+      "aac",
+      "-b:a",
+      "128k",
+      "-movflags",
+      "faststart", // Критично для iOS Safari
+      "-f",
+      "mp4", // mp4 контейнер, будет воспроизводим как m4a
+      "output.m4a",
+    ]);
 
-    const fileData = await ffmpeg.readFile("output.m4a");
-
-    const file = new File([fileData], crypto.randomUUID(), {
+    const m4aData = await ffmpeg.readFile("output.m4a");
+    const file = new File([m4aData], crypto.randomUUID(), {
       type: "audio/m4a",
     });
 
     return file;
   };
+
+  // const file = new File([fileData], crypto.randomUUID(), {
+  //   type: "audio/m4a",
+  // });
+
+  // return file;
 
   const downloadBlob = async (blob: Blob): Promise<void> => {
     const downloadBlob = await convertToDownloadFileExtension(blob);

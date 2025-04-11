@@ -3,10 +3,13 @@ import AudioRecorder from "./components/AudioRecordingComponent";
 
 function App() {
   return (
-    <AudioRecorder
-      onNotAllowedOrFound={(err) => console.table(err)}
-      downloadOnSavePress
-    />
+    <>
+      <audio controls src="/src/assets/test.m4a" />
+      <AudioRecorder
+        onNotAllowedOrFound={(err) => console.table(err)}
+        downloadOnSavePress
+      />
+    </>
   );
 }
 
