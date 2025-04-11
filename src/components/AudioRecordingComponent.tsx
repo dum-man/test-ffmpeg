@@ -1,6 +1,6 @@
-import { useState, useEffect, ReactElement } from "react";
-import { Props } from "./interfaces";
+import { ReactElement, useEffect } from "react";
 import useAudioRecorder from "../hooks/useAudioRecorder";
+import { Props } from "./interfaces";
 
 import micSVG from "../icons/mic.svg";
 import pauseSVG from "../icons/pause.svg";
@@ -8,6 +8,11 @@ import resumeSVG from "../icons/play.svg";
 import saveSVG from "../icons/save.svg";
 import discardSVG from "../icons/stop.svg";
 import "../styles/audio-recorder.css";
+
+import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { fetchFile, toBlobURL } from "@ffmpeg/util";
+
+const BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
 
 /**
  * Usage: https://github.com/samhirtarif/react-audio-recorder#audiorecorder-component
@@ -24,12 +29,10 @@ import "../styles/audio-recorder.css";
  * @prop `classes` Is an object with attributes representing classes for different parts of the component
  */
 const AudioRecorder: (props: Props) => ReactElement = ({
-  onRecordingComplete,
   onNotAllowedOrFound,
   recorderControls,
   audioTrackConstraints,
   downloadOnSavePress = false,
-  downloadFileExtension = "webm",
   mediaRecorderOptions,
   classes,
 }: Props) => {
@@ -46,65 +49,53 @@ const AudioRecorder: (props: Props) => ReactElement = ({
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useAudioRecorder(audioTrackConstraints, onNotAllowedOrFound, mediaRecorderOptions);
 
-  const [shouldSave, setShouldSave] = useState(false);
-
-  const stopAudioRecorder: (save?: boolean) => void = (save: boolean = true) => {
-    setShouldSave(save);
+  const stopAudioRecorder: (save?: boolean) => void = () => {
     stopRecording();
   };
 
-  const convertToDownloadFileExtension = async (webmBlob: Blob): Promise<Blob> => {
-    const FFmpeg = await import("@ffmpeg/ffmpeg");
-    const ffmpeg = FFmpeg.createFFmpeg({ log: false });
-    await ffmpeg.load();
+  const convertToDownloadFileExtension = async (blob: Blob) => {
+    const ffmpeg = new FFmpeg();
 
-    const inputName = "input.webm";
-    const outputName = `output.${downloadFileExtension}`;
-
-    ffmpeg.FS("writeFile", inputName, new Uint8Array(await webmBlob.arrayBuffer()));
-
-    await ffmpeg.run("-i", inputName, outputName);
-
-    const outputData = ffmpeg.FS("readFile", outputName);
-    const outputBlob = new Blob([outputData.buffer], {
-      type: `audio/${downloadFileExtension}`,
+    await ffmpeg.load({
+      coreURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.js`, "text/javascript"),
+      wasmURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.wasm`, "application/wasm"),
     });
 
-    return outputBlob;
+    ffmpeg.writeFile("input.wav", await fetchFile(blob));
+
+    await ffmpeg.exec(["-i", "input.wav", "-c:a", "aac", "-b:a", "192k", "output.m4a"]);
+
+    const fileData = await ffmpeg.readFile("output.m4a");
+
+    const file = new File([fileData], crypto.randomUUID(), {
+      type: "audio/m4a",
+    });
+
+    return file;
   };
 
   const downloadBlob = async (blob: Blob): Promise<void> => {
-    if (!crossOriginIsolated && downloadFileExtension !== "webm") {
-      console.warn(
-        `This website is not "cross-origin isolated". Audio will be downloaded in webm format, since mp3/wav encoding requires cross origin isolation. Please visit https://web.dev/cross-origin-isolation-guide/ and https://web.dev/coop-coep/ for information on how to make your website "cross-origin isolated"`
-      );
-    }
-
-    const downloadBlob = crossOriginIsolated
-      ? await convertToDownloadFileExtension(blob)
-      : blob;
-    const fileExt = crossOriginIsolated ? downloadFileExtension : "webm";
+    const downloadBlob = await convertToDownloadFileExtension(blob);
+    const fileExt = "m4a";
     const url = URL.createObjectURL(downloadBlob);
+
+    const audio = document.createElement("audio");
+    audio.src = url;
+    audio.controls = true;
+    document.body.appendChild(audio);
 
     const a = document.createElement("a");
     a.style.display = "none";
     a.href = url;
-    a.download = `audio.${fileExt}`;
+    a.download = `${downloadBlob.name}.${fileExt}`;
     document.body.appendChild(a);
     a.click();
     a.remove();
   };
 
   useEffect(() => {
-    if (
-      (shouldSave || recorderControls) &&
-      recordingBlob != null &&
-      onRecordingComplete != null
-    ) {
-      onRecordingComplete(recordingBlob);
-      if (downloadOnSavePress) {
-        void downloadBlob(recordingBlob);
-      }
+    if (recordingBlob && downloadOnSavePress) {
+      void downloadBlob(recordingBlob);
     }
   }, [recordingBlob]);
 
