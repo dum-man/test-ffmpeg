@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MediaAudioTrackConstraints, recorderControls } from "../hooks/useAudioRecorder";
 
 interface StyleProps {

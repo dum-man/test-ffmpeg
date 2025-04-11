@@ -18,6 +18,7 @@ function App() {
       //   echoCancellation: true,
       // }}
       onNotAllowedOrFound={(err) => console.table(err)}
+      downloadOnSavePress
       downloadFileExtension="mp3"
     />
   );
