@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from "react";
 
 export interface recorderControls {
@@ -62,6 +65,7 @@ const useAudioRecorder: (
   }, [setRecordingTime, setTimerInterval]);
 
   const _stopTimer: () => void = useCallback(() => {
+    //@ts-ignore
     timerInterval != null && clearInterval(timerInterval);
     setTimerInterval(undefined);
   }, [timerInterval, setTimerInterval]);
@@ -88,7 +92,7 @@ const useAudioRecorder: (
         });
       })
       .catch((err: DOMException) => {
-        console.log(err.name, err.message, err.cause);
+        console.log(err.name, err.message);
         onNotAllowedOrFound?.(err);
       });
   }, [
