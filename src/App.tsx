@@ -15,7 +15,7 @@ const convertedFormat = "audio/m4a";
 function App() {
   return (
     <>
-      <h2>recorded format: {}</h2>
+      <h2>recorded format: {recordedFormat}</h2>
       <h2>convertedFormat: {convertedFormat}</h2>
       <AudioRecorder
         convertedFormat={convertedFormat}
