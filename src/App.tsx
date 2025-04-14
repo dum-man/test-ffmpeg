@@ -10,7 +10,7 @@ function getPreferredAudioMimeType(): string {
 }
 
 const recordedFormat = getPreferredAudioMimeType();
-const convertedFormat = "audio/m4a";
+const convertedFormat = "audio/mp4";
 
 function App() {
   return (
