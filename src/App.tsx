@@ -9,15 +9,20 @@ function getPreferredAudioMimeType(): string {
   return "audio/webm";
 }
 
+const recordedFormat = getPreferredAudioMimeType();
+const convertedFormat = "audio/m4a";
+
 function App() {
   return (
     <>
-      <audio controls src="/audio/test.m4a" />
+      <h2>recorded format: {}</h2>
+      <h2>convertedFormat: {convertedFormat}</h2>
       <AudioRecorder
+        convertedFormat={convertedFormat}
         onNotAllowedOrFound={(err) => console.table(err)}
         downloadOnSavePress
         mediaRecorderOptions={{
-          mimeType: getPreferredAudioMimeType(),
+          mimeType: recordedFormat,
         }}
       />
     </>

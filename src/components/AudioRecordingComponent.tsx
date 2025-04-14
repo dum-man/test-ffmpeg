@@ -15,6 +15,7 @@ import { fetchFile, toBlobURL } from "@ffmpeg/util";
 const BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
 
 const AudioRecorder: (props: Props) => ReactElement = ({
+  convertedFormat,
   onNotAllowedOrFound,
   recorderControls,
   audioTrackConstraints,
@@ -69,7 +70,7 @@ const AudioRecorder: (props: Props) => ReactElement = ({
 
     const m4aData = await ffmpeg.readFile("output.m4a");
     const file = new File([m4aData], crypto.randomUUID(), {
-      type: "audio/mp4",
+      type: convertedFormat,
     });
 
     return file;
