@@ -29,7 +29,6 @@ interface StyleProps {
 }
 
 export interface Props {
-  convertedFormat: string;
   /**
    * This gets called when the save button is clicked.
    * In case the recording is cancelled, the blob is discarded.

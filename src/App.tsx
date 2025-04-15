@@ -10,15 +10,12 @@ function getPreferredAudioMimeType(): string {
 }
 
 const recordedFormat = getPreferredAudioMimeType();
-const convertedFormat = "audio/mp4";
 
 function App() {
   return (
     <>
       <h2>recorded format: {recordedFormat}</h2>
-      <h2>convertedFormat: {convertedFormat}</h2>
       <AudioRecorder
-        convertedFormat={convertedFormat}
         onNotAllowedOrFound={(err) => console.table(err)}
         downloadOnSavePress
         mediaRecorderOptions={{
