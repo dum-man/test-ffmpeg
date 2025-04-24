@@ -63,13 +63,13 @@ const AudioRecorder: (props: Props) => ReactElement = ({
       "-movflags",
       "faststart",
       "-f",
-      "mp4",
+      "ipod", // <-- m4a-контейнер
       "output.m4a",
     ]);
 
     const m4aData = await ffmpeg.readFile("output.m4a");
     const file = new File([m4aData], crypto.randomUUID(), {
-      type: "audio/mp4",
+      type: "audio/m4a",
     });
 
     return file;
