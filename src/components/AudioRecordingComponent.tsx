@@ -54,7 +54,6 @@ const AudioRecorder: (props: Props) => ReactElement = ({
     await ffmpeg.exec([
       "-i",
       inputFile,
-      "input.wav",
       "-c:a",
       "aac",
       "-b:a",
