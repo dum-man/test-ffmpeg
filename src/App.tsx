@@ -14,7 +14,7 @@ const recordedFormat = getPreferredAudioMimeType();
 function App() {
   return (
     <>
-      <h2>1 recorded format: {recordedFormat}</h2>
+      <h2>2 recorded format: {recordedFormat}</h2>
       <AudioRecorder
         onNotAllowedOrFound={(err) => console.table(err)}
         downloadOnSavePress

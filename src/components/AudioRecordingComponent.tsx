@@ -54,22 +54,22 @@ const AudioRecorder: (props: Props) => ReactElement = ({
     await ffmpeg.exec([
       "-i",
       inputFile,
-      "-c:a",
-      "aac",
-      "-b:a",
-      "192k",
-      "output.m4a",
       // "-c:a",
       // "aac",
       // "-b:a",
-      // "128k",
-      // "-profile:a",
-      // "aac_low", // <-- критично для совместимости
-      // "-movflags",
-      // "faststart", // <-- переместить moov в начало
-      // "-f",
-      // "mp4", // <-- явно указать формат контейнера
+      // "192k",
       // "output.m4a",
+      "-c:a",
+      "aac",
+      "-b:a",
+      "128k",
+      "-profile:a",
+      "aac_low", // <-- критично для совместимости
+      "-movflags",
+      "faststart", // <-- переместить moov в начало
+      "-f",
+      "mp4", // <-- явно указать формат контейнера
+      "output.m4a",
     ]);
 
     const m4aData = await ffmpeg.readFile("output.m4a");
