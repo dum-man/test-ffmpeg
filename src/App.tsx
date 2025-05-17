@@ -9,7 +9,7 @@ function App() {
     return <h1>WebView!</h1>;
   }
 
-  return <h1>Browser</h1>;
+  return <h1>Browser:*</h1>;
 }
 
 export default App;
