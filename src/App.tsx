@@ -14,25 +14,39 @@ const isWebview = (userAgent: string) => {
 //   return isWebkit && !isChrome && !isFirefox;
 // }
 
-function hasWebViewRestrictions() {
-  let isBlocked = false;
-  try {
-    const newWin = window.open("", "_blank");
-    if (!newWin || newWin.closed || typeof newWin.closed === "undefined") {
-      isBlocked = true;
-    } else {
-      newWin.close();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  } catch (e: any) {
-    isBlocked = true;
+// function hasWebViewRestrictions() {
+//   let isBlocked = false;
+//   try {
+//     const newWin = window.open("", "_blank");
+//     if (!newWin || newWin.closed || typeof newWin.closed === "undefined") {
+//       isBlocked = true;
+//     } else {
+//       newWin.close();
+//     }
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+//   } catch (e: any) {
+//     isBlocked = true;
+//   }
+
+//   return isBlocked;
+// }
+
+const hasMissingFeatures = () => {
+  const missingFeatures = [];
+
+  if (typeof window.open !== "function") missingFeatures.push("window.open");
+  if (!window.localStorage) missingFeatures.push("localStorage");
+  if (!window.history || !history.pushState) missingFeatures.push("History API");
+
+  if (missingFeatures.length) {
+    return true;
   }
 
-  return isBlocked;
-}
+  return false;
+};
 
 function App() {
-  if (isWebview(window.navigator.userAgent) || hasWebViewRestrictions()) {
+  if (isWebview(window.navigator.userAgent) || hasMissingFeatures()) {
     return <h1>WebView!!!</h1>;
   }
 
