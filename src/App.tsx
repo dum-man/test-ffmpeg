@@ -14,13 +14,26 @@ const isWebview = (userAgent: string) => {
 //   return isWebkit && !isChrome && !isFirefox;
 // }
 
-function App() {
-  if (isWebview(window.navigator.userAgent)) {
-    return <h1>WebView</h1>;
+function hasWebViewRestrictions() {
+  let isBlocked = false;
+  try {
+    const newWin = window.open("", "_blank");
+    if (!newWin || newWin.closed || typeof newWin.closed === "undefined") {
+      isBlocked = true;
+    } else {
+      newWin.close();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  } catch (e: any) {
+    isBlocked = true;
   }
-  //@ts-ignore
-  if (window.Telegram && window.Telegram.WebApp) {
-    return <h1>WebView Telegram</h1>;
+
+  return isBlocked;
+}
+
+function App() {
+  if (isWebview(window.navigator.userAgent) || hasWebViewRestrictions()) {
+    return <h1>WebView!!!</h1>;
   }
 
   // if (isMobileSafari()) {
