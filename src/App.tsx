@@ -6,7 +6,7 @@ const isWebview = (userAgent: string) => {
 
 function App() {
   if (isWebview(window.navigator.userAgent)) {
-    <h1>WebView</h1>;
+    return <h1>WebView!</h1>;
   }
 
   return <h1>Browser</h1>;
