@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import "./App.css";
 
 // const isWebview = (userAgent: string) => {
@@ -57,8 +58,11 @@ function isInAppWebView() {
 
   // Method 2: Check for absence of common browser features
   if (
+    //@ts-ignore
     window.browser === undefined &&
+    //@ts-ignore
     typeof window.openDatabase !== "undefined" &&
+    //@ts-ignore
     navigator.standalone === undefined
   ) {
     return true;
@@ -67,11 +71,13 @@ function isInAppWebView() {
   // Method 3: Check for WebView bridge or custom schemes
   try {
     // iOS WKWebView detection
+    //@ts-ignore
     if (window.webkit && window.webkit.messageHandlers) {
       return true;
     }
 
     // Android JavaScript interface detection
+    //@ts-ignore
     if (window.Android || window.JSBridge || window.WebViewJavascriptBridge) {
       return true;
     }
