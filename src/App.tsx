@@ -6,12 +6,11 @@ const isWebview = (userAgent: string) => {
 
 function isMobileSafari() {
   const ua = navigator.userAgent || "";
-  const isIOS = /iP(hone|od|ad)/.test(ua);
   const isWebkit = /WebKit/.test(ua);
   const isChrome = /CriOS/.test(ua); // Chrome on iOS
   const isFirefox = /FxiOS/.test(ua); // Firefox on iOS
 
-  return isIOS && isWebkit && !isChrome && !isFirefox;
+  return isWebkit && !isChrome && !isFirefox;
 }
 
 function App() {
